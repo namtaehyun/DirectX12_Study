@@ -20,6 +20,10 @@ void Input::Update()	// 매 프레임 마다 Update
 		return;
 	}
 
+	BYTE asciikeys[KEY_TYPE_COUNT] = {};
+	if (::GetKeyboardState(asciikeys) == false)
+		return;
+
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 	{
 		if (::GetAsyncKeyState(key) & 0x8000)

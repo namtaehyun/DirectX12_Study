@@ -1,14 +1,27 @@
 #pragma once
+
+enum class CONSTANT_BUFFER_TYPE : uint8
+{
+	TRANSFORM,
+	MATERIAL,
+	END
+};
+
+enum
+{
+	CONSTANT_BUFFER_COUNT = static_cast<int>(CONSTANT_BUFFER_TYPE::END)
+};
+
 class ConstantBuffer
 {
 public:
 	ConstantBuffer();
 	~ConstantBuffer();
 
-	void										Init(uint32 size, uint32 count);
+	void										Init(CBV_REGISTER reg,uint32 size, uint32 count);
 	
 	void										Clear();
-	D3D12_CPU_DESCRIPTOR_HANDLE	PushData(int32 rootParamaterIndex, void* buffer, uint32 size);
+	void										PushData(void* buffer, uint32 size);
 
 	D3D12_GPU_VIRTUAL_ADDRESS		GetGpuVirtualAddress(uint32 index);
 	D3D12_CPU_DESCRIPTOR_HANDLE	GetCpuHandle(uint32 index);
@@ -28,4 +41,6 @@ private:
 	uint32										_handleIncrementSize = 0;			// 몇 칸을 띄워야 다음 핸들로 넘어갈 수 있는지?
 
 	uint32										_currentIndex	= 0;				// 지금 내가 사용하고 있는 버퍼의 인덱스
+
+	CBV_REGISTER							_reg;
 };
