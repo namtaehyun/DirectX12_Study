@@ -1,6 +1,8 @@
 #pragma once
 
 // 각종 include
+#define _HAS_STD_BYTE 0	// std::byte사용 x
+
 #include <windows.h>
 #include <tchar.h>
 #include <memory>
@@ -10,6 +12,9 @@
 #include <list>
 #include <map>
 using namespace std;
+
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #include "d3dx12.h"
 #include <d3d12.h>
@@ -23,12 +28,20 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
+#include <DirectXTex/DirectXTex.h>
+#include <DirectXTex/DirectXTex.inl>
+
 // 각종 lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
 
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
+#else
+#pragma comment(lib, "DirectXTex\\DirectXTex.lib")
+#endif
 // 각종 typedef
 using int8		= __int8;
 using int16		= __int16;
@@ -43,7 +56,7 @@ using Vec3		= XMFLOAT3;
 using Vec4		= XMFLOAT4;
 using Matrix		= XMMATRIX;
 
-enum class CBV_REGISTER
+enum class CBV_REGISTER : uint8
 {
 	b0 = 0,
 	b1,
@@ -53,11 +66,23 @@ enum class CBV_REGISTER
 	END
 };
 
+enum class SRV_REGISTER : uint8
+{
+	t0 = static_cast<uint8>(CBV_REGISTER::END),
+	t1,
+	t2,
+	t3,
+	t4,
+
+	END
+};
+
 enum
 {
 	SWAP_CHAIN_BUFFER_COUNT = 2,
 	CBV_REGISTER_COUNT = CBV_REGISTER::END,
-	REGISTER_COUNT = CBV_REGISTER::END
+	SRV_REGISTER_COUNT = static_cast<uint8>(SRV_REGISTER::END) - CBV_REGISTER_COUNT,
+	REGISTER_COUNT = CBV_REGISTER_COUNT + SRV_REGISTER_COUNT
 };
 
 struct WindowInfo
@@ -72,6 +97,7 @@ struct Vertex
 {
 	Vec3 pos;
 	Vec4 color;
+	Vec2 uv;		//Texture 좌표
 };
 
 struct Transform
@@ -79,8 +105,9 @@ struct Transform
 	Vec4 offset;
 };
 
-#define DEVICE				 GEngine->GetDevice()->GetDevice()
-#define CMD_LIST			 GEngine->GetCmdQueue()->GetCmdList()
-#define ROOT_SIGNATURE GEngine->GetRootSignature()->GetSignature()
+#define DEVICE						GEngine->GetDevice()->GetDevice()
+#define CMD_LIST					GEngine->GetCmdQueue()->GetCmdList()
+#define ROOT_SIGNATURE		GEngine->GetRootSignature()->GetSignature()
+#define RESOURCE_CMD_LIST		GEngine->GetCmdQueue()->GetResourceCmdList()
 
 extern unique_ptr<class Engine> GEngine;

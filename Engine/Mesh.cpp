@@ -18,10 +18,10 @@ void Mesh::Render()
 	// 1) Buffer에 데이터 셋팅
 	// 2) TableDescHeap에 CBV전달
 	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
-	{
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetConstantBuffer()->PushData(0, &_transform, sizeof(_transform));
-		GEngine->GetTableDescriptorHeap()->SetCBV(handle, CBV_REGISTER::b0);
-	}
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = GEngine->GetConstantBuffer()->PushData(0, &_transform, sizeof(_transform));
+	GEngine->GetTableDescriptorHeap()->SetCBV(handle, CBV_REGISTER::b0);
+	GEngine->GetTableDescriptorHeap()->SetSRV(_tex->GetCpuHandle(), SRV_REGISTER::t0);
+
 	GEngine->GetTableDescriptorHeap()->CommitTable();
 
 	//	CMD_LIST->DrawInstanced(_vertexCount, 1, 0, 0);	// Vertex를 이용한 버전
