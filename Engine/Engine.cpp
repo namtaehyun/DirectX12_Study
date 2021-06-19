@@ -8,7 +8,6 @@
 void Engine::Init(const WindowInfo& info)
 {
 	_window = info;
-	ResizeWindow(info.width, info.height);
 
 	// 그려질 화면 크기 설정
 	_viewport = { 0, 0, static_cast<FLOAT>(info.width), static_cast<FLOAT>(info.height), 0.0f, 1.0f };
@@ -20,6 +19,7 @@ void Engine::Init(const WindowInfo& info)
 	_rootSignature = make_shared<RootSignature>();
 	_constantBuffer = make_shared<ConstantBuffer>();
 	_TableDescriptorHeap = make_shared<TableDescriptorHeap>();
+	_DepthStencilBuffer = make_shared<DepthStencilBuffer>();
 
 	_device->Init();
 	_cmdQueue->Init(_device->GetDevice(), _swapChain);
@@ -27,6 +27,9 @@ void Engine::Init(const WindowInfo& info)
 	_rootSignature->Init();
 	_constantBuffer->Init(sizeof(Transform), 256);	// Shader데이터와 맞춰주면됨.
 	_TableDescriptorHeap->Init(256);
+	_DepthStencilBuffer->Init(_window);
+
+	ResizeWindow(info.width, info.height);
 }
 
 void Engine::Render()
@@ -60,4 +63,6 @@ void Engine::ResizeWindow(int32 width, int32 height)
 	RECT rect = { 0, 0, width, height };
 	::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 	::SetWindowPos(_window.hwnd, 0, 100, 100, width, height, 0);	// 100,100 위치에 width, height 크기로 창을 띄운다.
+
+	_DepthStencilBuffer->Init(_window);
 }
