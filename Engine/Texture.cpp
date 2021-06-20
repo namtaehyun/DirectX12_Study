@@ -2,7 +2,6 @@
 #include "Texture.h"
 #include "Engine.h"
 
-
 void Texture::Init(const wstring& path)
 {
 	CreateTexture(path);

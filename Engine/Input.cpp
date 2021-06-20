@@ -1,18 +1,17 @@
 #include "pch.h"
 #include "Input.h"
 
-void Input::Init(HWND hWnd)
+
+void Input::Init(HWND hwnd)
 {
-	_hWnd = hWnd;
+	_hwnd = hwnd;
 	_states.resize(KEY_TYPE_COUNT, KEY_STATE::NONE);
-	// 아무것도 안누른 상태
 }
 
-void Input::Update()	// 매 프레임 마다 Update
+void Input::Update()
 {
-	HWND hWnd = ::GetActiveWindow();
-
-	if (_hWnd != hWnd)
+	HWND hwnd = ::GetActiveWindow();
+	if (_hwnd != hwnd)
 	{
 		for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 			_states[key] = KEY_STATE::NONE;
@@ -20,13 +19,14 @@ void Input::Update()	// 매 프레임 마다 Update
 		return;
 	}
 
-	BYTE asciikeys[KEY_TYPE_COUNT] = {};
-	if (::GetKeyboardState(asciikeys) == false)
+	BYTE asciiKeys[KEY_TYPE_COUNT] = {};
+	if (::GetKeyboardState(asciiKeys) == false)
 		return;
 
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 	{
-		if (::GetAsyncKeyState(key) & 0x8000)
+		// 키가 눌려 있으면 true
+		if (asciiKeys[key] & 0x80)
 		{
 			KEY_STATE& state = _states[key];
 
@@ -40,12 +40,11 @@ void Input::Update()	// 매 프레임 마다 Update
 		{
 			KEY_STATE& state = _states[key];
 
-			// 이전 프레임에 키를 뗸 상태라면 UP
+			// 이전 프레임에 키를 누른 상태라면 UP
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::UP;
 			else
 				state = KEY_STATE::NONE;
-
 		}
 	}
 }

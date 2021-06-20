@@ -8,11 +8,6 @@ void RootSignature::Init()
 	CreateRootSignature();
 }
 
-void RootSignature::CreateSamplerDesc()
-{
-	_samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
-}
-
 void RootSignature::CreateRootSignature()
 {
 	CD3DX12_DESCRIPTOR_RANGE ranges[] =
@@ -31,4 +26,9 @@ void RootSignature::CreateRootSignature()
 	ComPtr<ID3DBlob> blobError;
 	::D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blobSignature, &blobError);
 	DEVICE->CreateRootSignature(0, blobSignature->GetBufferPointer(), blobSignature->GetBufferSize(), IID_PPV_ARGS(&_signature));
+}
+
+void RootSignature::CreateSamplerDesc()
+{
+	_samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 }

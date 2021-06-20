@@ -3,30 +3,20 @@
 #include "Engine.h"
 #include "Material.h"
 
-void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexbuffer)
+void Mesh::Init(const vector<Vertex>& vertexBuffer, const vector<uint32>& indexBuffer)
 {
 	CreateVertexBuffer(vertexBuffer);
-	CreateIndexBuffer(indexbuffer);
+	CreateIndexBuffer(indexBuffer);
 }
 
 void Mesh::Render()
 {
-	CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	// 정점 연결 형식(삼각형)
-	CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView);								// Slot: (0~15)
+	CMD_LIST->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	CMD_LIST->IASetVertexBuffers(0, 1, &_vertexBufferView); // Slot: (0~15)
 	CMD_LIST->IASetIndexBuffer(&_indexBufferView);
 
-	// TODO 인자 셋팅
-	// 1) Buffer에 데이터 셋팅
-	// 2) TableDescHeap에 CBV전달
-	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
-	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&_transform, sizeof(_transform));
-//	GEngine->GetTableDescriptorHeap()->SetCBV(handle, CBV_REGISTER::b0);
+	GEngine->GetTableDescHeap()->CommitTable();
 
-	_mat->Update();
-
-	GEngine->GetTableDescriptorHeap()->CommitTable();
-
-	//	CMD_LIST->DrawInstanced(_vertexCount, 1, 0, 0);	// Vertex를 이용한 버전
 	CMD_LIST->DrawIndexedInstanced(_indexCount, 1, 0, 0, 0);
 }
 
@@ -45,17 +35,13 @@ void Mesh::CreateVertexBuffer(const vector<Vertex>& buffer)
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&_vertexBuffer));
-	// GPU에 공간을 할당하는 함수 - vertexBuffer
 
 	// Copy the triangle data to the vertex buffer.
 	void* vertexDataBuffer = nullptr;
 	CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
-	_vertexBuffer->Map(0, &readRange, &vertexDataBuffer);		// 뚜껑을 열어서
-	::memcpy(vertexDataBuffer, &buffer[0], bufferSize);				// GPU공간에 데이터를 밀어넣고
-	_vertexBuffer->Unmap(0, nullptr);								// 뚜껑을 닫음.
-	// -> 이렇게 하면 GPU에 데이터 전달 완료
-
-	// CPU Memory -> GPU Memory 이동
+	_vertexBuffer->Map(0, &readRange, &vertexDataBuffer);
+	::memcpy(vertexDataBuffer, &buffer[0], bufferSize);
+	_vertexBuffer->Unmap(0, nullptr);
 
 	// Initialize the vertex buffer view.
 	_vertexBufferView.BufferLocation = _vertexBuffer->GetGPUVirtualAddress();
