@@ -134,7 +134,11 @@ public:								\
 
 struct TransformParams
 {
-	Matrix matWVP;
+	Matrix matWorld;
+	Matrix matView;
+	Matrix matProjection;
+	Matrix matWV;
+	Matrix matWVP;			// 경우에 따라 WVP가 아닌, WV혹은, W, V각각의 데이터만 필요할 수 있기 떄문에 모두 넣어서 관리해주는걸로 함.
 };
 
 extern unique_ptr<class Engine> GEngine;
