@@ -40,7 +40,7 @@ void Transform::PushData()
 	// TODO
 
 	Matrix matWVP = _matWorld * Camera::S_MatView * Camera::S_MatProjection;
-	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&_matWorld, sizeof(_matWorld));
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&matWVP, sizeof(matWVP));
 
 }
 

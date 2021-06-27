@@ -1,12 +1,13 @@
 #pragma once
 #include "Component.h"
+#include "Object.h"
 
 class Transform;
 class MeshRenderer;
 class MonoBehaviour;
 class Camera;
 
-class GameObject : public enable_shared_from_this<GameObject>
+class GameObject : public Object, public enable_shared_from_this<GameObject>		// this를 smartptr로 사용하기 위함
 {
 public:
 	GameObject();

@@ -35,7 +35,7 @@ private:
 	// TODO : World 위치 관련
 
 	//Parent 기준 Local 좌표
-	Vec3 _localposition		= {};
+	Vec3 _localposition		= {}; 
 	Vec3 _localrotation		= {};
 	Vec3 _localscale			= {1.f, 1.f, 1.f};
 
