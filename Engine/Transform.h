@@ -18,7 +18,7 @@ public:
 	const Vec3&					GetLocalScale() { return _localscale; }						// Parent를 기준으로 한 Scale
 
 	const Matrix&				GetLocalToWorldMatrix() { return _matWorld; }			// 진짜 물체 자체의 World로 뛰어넘기 위한 행렬
-	const Vec3&					GetWorldPosition() { return _matWorld.Translation(); }
+	Vec3							GetWorldPosition() { return _matWorld.Translation(); }
 
 	Vec3							GetRight() { return _matWorld.Right(); }
 	Vec3							GetUp() { return _matWorld.Up(); }

@@ -68,15 +68,15 @@ void Scene::PushLightData()
 
 	for (auto& gameObject : _gameObjects)		// 모든 게임오브젝트에 대해
 	{
-		if (gameObject->GetLight() == nullptr)	// Light가 없으면 스킵
+		if (gameObject->GetLight() == nullptr)
 			continue;
 
-		const LightInfo& lightInfo = gameObject->GetLight()->GetLightInfo();	// 있으면 Lightinfo를 꺼내서
+		const LightInfo& lightInfo = gameObject->GetLight()->GetLightInfo();
 
-		lightParams.lights[lightParams.lightCount] = lightInfo;					// 복사 후
-		lightParams.lightCount++;														// 카운트 증가
+		lightParams.lights[lightParams.lightCount] = lightInfo;
+		lightParams.lightCount++;
 	}
-	// 끝나면 Global ConstantBuffer에 넣어 GPU에 밀어넣음.
+
 	CONST_BUFFER(CONSTANT_BUFFER_TYPE::GLOBAL)->SetGlobalData(&lightParams, sizeof(lightParams));
 }
 
