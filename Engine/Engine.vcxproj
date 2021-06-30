@@ -237,6 +237,7 @@
     <None Include="..\Resources\Shader\params.hlsli" />
     <None Include="..\Resources\Shader\utils.hlsli" />
     <None Include="SimpleMath.inl" />
+    <None Include="skybox.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

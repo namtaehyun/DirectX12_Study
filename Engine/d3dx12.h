@@ -202,8 +202,8 @@ struct CD3DX12_RASTERIZER_DESC : public D3D12_RASTERIZER_DESC
     {}
     explicit CD3DX12_RASTERIZER_DESC( CD3DX12_DEFAULT )
     {
-        FillMode = D3D12_FILL_MODE_SOLID;
-        CullMode = D3D12_CULL_MODE_BACK;
+        FillMode = D3D12_FILL_MODE_SOLID;			
+        CullMode = D3D12_CULL_MODE_BACK;			// 와인딩오더가 반시계방향에 해당하는 애들 Culling - Rasterize단계에서 정점을 묶음.
         FrontCounterClockwise = FALSE;
         DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
         DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
