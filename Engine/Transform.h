@@ -13,9 +13,12 @@ public:
 	virtual void					FinalUpdate() override;
 	void							PushData();
 
-	const Vec3&					GetLocalPosition() { return _localposition; }				// Parent를 기준으로 한 Position
-	const Vec3&					GetLocalRotation() { return _localrotation; }				// Parent를 기준으로 한 Rotation
-	const Vec3&					GetLocalScale() { return _localscale; }						// Parent를 기준으로 한 Scale
+	const Vec3&				GetLocalPosition() { return _localposition; }				// Parent를 기준으로 한 Position
+	const Vec3&				GetLocalRotation() { return _localrotation; }				// Parent를 기준으로 한 Rotation
+	const Vec3&				GetLocalScale() { return _localscale; }						// Parent를 기준으로 한 Scale
+
+	// TEMP Bounding Box
+	float							GetBoundingSphereRadius() { return max(max(_localscale.x, _localscale.y), _localscale.z); }	// x,y,z의 scale중 가장 큰놈
 
 	const Matrix&				GetLocalToWorldMatrix() { return _matWorld; }			// 진짜 물체 자체의 World로 뛰어넘기 위한 행렬
 	Vec3							GetWorldPosition() { return _matWorld.Translation(); }
@@ -30,7 +33,7 @@ public:
 
 public:
 	void							SetParent(shared_ptr<Transform> parent) { _parent = parent; }
-	weak_ptr<Transform>		GetParent() { return _parent; }
+	weak_ptr<Transform>	GetParent() { return _parent; }
 private:
 	// TODO : World 위치 관련
 
