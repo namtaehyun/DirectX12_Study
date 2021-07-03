@@ -1,16 +1,18 @@
 #pragma once
+
 #include "GameObject.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
 
-
 class Resources
 {
 	DECLARE_SINGLE(Resources);
 
 public:
+	void Init();
+
 	template<typename T>
 	shared_ptr<T> Load(const wstring& key, const wstring& path);
 
@@ -22,13 +24,17 @@ public:
 
 	template<typename T>
 	OBJECT_TYPE GetObjectType();
-	
+
+	shared_ptr<Mesh> LoadRectangleMesh();
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
 
 private:
+	void CreateDefaultShader();
+
+private:
 	using KeyObjMap = std::map<wstring/*key*/, shared_ptr<Object>>;
-	array<KeyObjMap, OBJECT_TYPE_COUNT> _resources;		// 오브젝트 타입에 따라 별도의 Map을 만든다.
+	array<KeyObjMap, OBJECT_TYPE_COUNT> _resources;
 };
 
 template<typename T>
@@ -49,7 +55,7 @@ inline shared_ptr<T> Resources::Load(const wstring& key, const wstring& path)
 }
 
 template<typename T>
-bool Resources::Add(const wstring& key, shared_ptr<T> object)		// 직접만든걸 등록해주는 것 (임시)
+bool Resources::Add(const wstring& key, shared_ptr<T> object)
 {
 	OBJECT_TYPE objectType = GetObjectType<T>();
 	KeyObjMap& keyObjMap = _resources[static_cast<uint8>(objectType)];
@@ -64,7 +70,7 @@ bool Resources::Add(const wstring& key, shared_ptr<T> object)		// 직접만든걸 등�
 }
 
 template<typename T>
-shared_ptr<T> Resources::Get(const wstring& key)		// load되었다는 가정하에 key를 이용하여 반환
+shared_ptr<T> Resources::Get(const wstring& key)
 {
 	OBJECT_TYPE objectType = GetObjectType<T>();
 	KeyObjMap& keyObjMap = _resources[static_cast<uint8>(objectType)];

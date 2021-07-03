@@ -1,3 +1,7 @@
+#ifndef _UTILS_FX_
+#define _UTILS_FX_
+
+#include "params.fx"
 
 LightColor CalculateLightColor(int lightIndex, float3 viewNormal, float3 viewPos)
 {
@@ -12,7 +16,7 @@ LightColor CalculateLightColor(int lightIndex, float3 viewNormal, float3 viewPos
 	if (g_light[lightIndex].lightType == 0)
 	{
 		// Directional Light
-		viewLightDir = normalize(mul(float4(g_light[lightIndex].direction.xyz, 0.f), g_matView).xyz);		
+		viewLightDir = normalize(mul(float4(g_light[lightIndex].direction.xyz, 0.f), g_matView).xyz);
 		// world기준 Direction을 view공간으로 바꿔주고 단위벡터로 변환.
 		diffuseRatio = saturate(dot(-viewLightDir, viewNormal));
 		// cos(theta)를 구하는 것임. 내적 후 saturate해주면 0~1까지 숫자로 밀어줌. (음수일경우 0)
@@ -38,7 +42,7 @@ LightColor CalculateLightColor(int lightIndex, float3 viewNormal, float3 viewPos
 		viewLightDir = normalize(viewPos - viewLightPos);
 		diffuseRatio = saturate(dot(-viewLightDir, viewNormal));
 
-		if (g_light[lightIndex].range == 0.f)			
+		if (g_light[lightIndex].range == 0.f)
 			distanceRatio = 0.f;
 		else
 		{
@@ -61,7 +65,7 @@ LightColor CalculateLightColor(int lightIndex, float3 viewNormal, float3 viewPos
 		}
 	}
 
-	float3 reflectionDir = normalize(viewLightDir + 2 * (saturate(dot(-viewLightDir, viewNormal)) * viewNormal));		
+	float3 reflectionDir = normalize(viewLightDir + 2 * (saturate(dot(-viewLightDir, viewNormal)) * viewNormal));
 	// 빛이 들어오는 방향의 마이너스와 normal벡터를 내적해준거에 다시 마이너스를 곱한 후 2번가면 반사벡터가 나옴.
 	float3 eyeDir = normalize(viewPos);
 	// camera 벡터
@@ -74,3 +78,4 @@ LightColor CalculateLightColor(int lightIndex, float3 viewNormal, float3 viewPos
 
 	return color;
 }
+#endif
