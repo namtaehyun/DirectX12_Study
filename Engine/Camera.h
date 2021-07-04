@@ -15,10 +15,13 @@ public:
 	virtual	~Camera();
 
 	virtual void				FinalUpdate() override;
-	void						Render();
 
 	void						SetProjectionType(PROJECTION_TYPE type) { _type = type; }
 	PROJECTION_TYPE		GetProJectionType() { return _type; }
+
+	void						SortGameObject();
+	void						Render_Deferred();
+	void						Render_Forward();
 
 	void						SetCullingMaskLayerOnOff(uint8 layer, bool on)
 	{
@@ -45,6 +48,10 @@ private:
 
 	Frustum		_frustum;
 	uint32		_cullingMask = 0;		// bit로 두고 UI를 Culling 할지말지 정해주는 것.
+public:
+	vector<shared_ptr<GameObject>> _vecDeferred;
+	vector<shared_ptr<GameObject>> _vecForward;
+
 public:
 	// 임시 변수
 	static Matrix S_MatView;

@@ -1,7 +1,13 @@
 #pragma once
 #include "Object.h"
 
-enum class RASTERIZER_TYPE
+enum class SHADER_TYPE : uint8
+{
+	DEFERRED,
+	FORWARD,
+};
+
+enum class RASTERIZER_TYPE : uint8
 {
 	CULL_NONE,			// 둘다 안무시
 	CULL_FRONT,			// 와인딩 오더 (시계방향 무시)
@@ -11,7 +17,7 @@ enum class RASTERIZER_TYPE
 
 // 깊이 테스트 Skybox가 절두체를 기준으로 무조건 보여야 하는데, 깊이값이 다른 오브젝트에 밀려서 안보이면 안되니까
 // 이를 위한 처리를 해줄 필요가 있음. 이를 위해 사용하는게 DEPTH_STENCIL_BUFFER인데,
-enum class DEPTH_STENCIL_TYPE		
+enum class DEPTH_STENCIL_TYPE	:uint8	
 {
 	LESS,					// 작은 놈만 그려준다.
 	LESS_EQUAL,		// 작을 때랑 같을 떄도 그려준다.
@@ -21,8 +27,10 @@ enum class DEPTH_STENCIL_TYPE
 
 struct ShaderInfo
 {
+	SHADER_TYPE shaderType = SHADER_TYPE::FORWARD;
 	RASTERIZER_TYPE rasterizerType = RASTERIZER_TYPE::CULL_BACK;
 	DEPTH_STENCIL_TYPE depthStencilType = DEPTH_STENCIL_TYPE::LESS;
+	D3D12_PRIMITIVE_TOPOLOGY_TYPE topologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 };
 
 // [일감 기술서] 외주 인력들이 뭘 해야할지 기술
@@ -35,12 +43,16 @@ public:
 	void													Init(const wstring& path, ShaderInfo info = ShaderInfo());
 	void													Update();
 
+	SHADER_TYPE										GetShaderType() { return _info.shaderType; }
+
 private:
 	void													CreateShader(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob, D3D12_SHADER_BYTECODE& shaderByteCode);
 	void													CreateVertexShader(const wstring& path, const string& name, const string& version);
 	void													CreatePixelShader(const wstring& path, const string& name, const string& version);
-
+	
 private:
+	ShaderInfo												_info;
+
 	ComPtr<ID3DBlob>									_vsBlob;
 	ComPtr<ID3DBlob>									_psBlob;
 	ComPtr<ID3DBlob>									_errBlob;
