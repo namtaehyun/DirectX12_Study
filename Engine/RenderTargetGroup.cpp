@@ -48,22 +48,22 @@ void RenderTargetGroup::OMSetRenderTargets(uint32 count, uint32 offset)
 {
 	// CommandQueue에서 백버퍼 하나만 쓸 경우
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_rtvHeapBegin, offset * _rtvHeapSize);
-	CMD_LIST->OMSetRenderTargets(count, &rtvHandle, FALSE/*1개*/, &_dsvHeapBegin);
+	GRAPHICS_CMD_LIST->OMSetRenderTargets(count, &rtvHandle, FALSE/*1개*/, &_dsvHeapBegin);
 }
 
 void RenderTargetGroup::OMSetRenderTargets()
 {
 	// 여러개 ex) G_BUFFER
-	CMD_LIST->OMSetRenderTargets(_rtCount, &_rtvHeapBegin, TRUE/*다중*/, &_dsvHeapBegin);
+	GRAPHICS_CMD_LIST->OMSetRenderTargets(_rtCount, &_rtvHeapBegin, TRUE/*다중*/, &_dsvHeapBegin);
 }
 
 void RenderTargetGroup::ClearRenderTargetView(uint32 index)
 {
 	//RTV 초기화
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_rtvHeapBegin, index * _rtvHeapSize);
-	CMD_LIST->ClearRenderTargetView(rtvHandle, _rtVec[index].clearColor, 0, nullptr);
+	GRAPHICS_CMD_LIST->ClearRenderTargetView(rtvHandle, _rtVec[index].clearColor, 0, nullptr);
 
-	CMD_LIST->ClearDepthStencilView(_dsvHeapBegin, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+	GRAPHICS_CMD_LIST->ClearDepthStencilView(_dsvHeapBegin, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 }
 
 void RenderTargetGroup::ClearRenderTargetView()
@@ -73,18 +73,18 @@ void RenderTargetGroup::ClearRenderTargetView()
 	for (uint32 i = 0; i < _rtCount; i++)
 	{
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(_rtvHeapBegin, i * _rtvHeapSize);
-		CMD_LIST->ClearRenderTargetView(rtvHandle, _rtVec[i].clearColor, 0, nullptr);
+		GRAPHICS_CMD_LIST->ClearRenderTargetView(rtvHandle, _rtVec[i].clearColor, 0, nullptr);
 	}
 
-	CMD_LIST->ClearDepthStencilView(_dsvHeapBegin, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+	GRAPHICS_CMD_LIST->ClearDepthStencilView(_dsvHeapBegin, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
 }
 
 void RenderTargetGroup::WaitTargetToResource()
 {
-	CMD_LIST->ResourceBarrier(_rtCount, _targetToResource);
+	GRAPHICS_CMD_LIST->ResourceBarrier(_rtCount, _targetToResource);
 }
 
 void RenderTargetGroup::WaitResourcesToTarget()
 {
-	CMD_LIST->ResourceBarrier(_rtCount, _resourceToTarget);
+	GRAPHICS_CMD_LIST->ResourceBarrier(_rtCount, _resourceToTarget);
 }

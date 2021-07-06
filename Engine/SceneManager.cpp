@@ -69,6 +69,25 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 	SetLayerName(1, L"UI");
 #pragma endregion
 
+#pragma region ComputeShader
+	{
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
+
+		// UAV 용 Texture 생성
+		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
+			DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
+			CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
+			D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);		// UAV용도로 사용하겠다.
+
+		shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
+		material->SetShader(shader);
+		material->SetInt(0, 1);
+		GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
+
+		// 쓰레드 그룹 (1 * 1024 * 1) -- Shader에서 1024, 1, 1로 되었는데???? 근데 왜..?
+		material->Dispatch(1, 1024, 1);		// Compute Shader 실행 됨.
+	}
+#pragma endregion
 	shared_ptr<Scene> scene = make_shared<Scene>();
 
 #pragma region Camera
@@ -152,13 +171,13 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 #pragma endregion
 
 #pragma region UI_Test
-	for (int32 i = 0; i < 5; i++)
+	for (int32 i = 0; i < 6; i++)
 	{
-		shared_ptr<GameObject> sphere = make_shared<GameObject>();
-		sphere->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-		sphere->AddComponent(make_shared<Transform>());
-		sphere->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-		sphere->GetTransform()->SetLocalPosition(Vec3(-350.f + (i * 160), 250.f, 500.f));
+		shared_ptr<GameObject> obj = make_shared<GameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(make_shared<Transform>());
+		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(-350.f + (i * 120), 250.f, 500.f));
 		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
 		{
 			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
@@ -170,16 +189,18 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 			shared_ptr<Texture> texture;
 			if (i < 3)
 				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->GetRTTexture(i);
-			else
+			else if (i < 5)
 				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->GetRTTexture(i - 3);
+			else
+				texture = GET_SINGLE(Resources)->Get<Texture>(L"UAVTexture");
 
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
 			meshRenderer->SetMaterial(material);
 		}
-		sphere->AddComponent(meshRenderer);
-		scene->AddGameObject(sphere);
+		obj->AddComponent(meshRenderer);
+		scene->AddGameObject(obj);
 	}
 #pragma endregion
 
