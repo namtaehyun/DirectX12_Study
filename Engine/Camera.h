@@ -51,6 +51,7 @@ private:
 public:
 	vector<shared_ptr<GameObject>> _vecDeferred;
 	vector<shared_ptr<GameObject>> _vecForward;
+	vector<shared_ptr<GameObject>> _vecParticle;
 
 public:
 	// 임시 변수

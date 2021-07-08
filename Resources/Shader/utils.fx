@@ -78,4 +78,12 @@ LightColor CalculateLightColor(int lightIndex, float3 viewNormal, float3 viewPos
 
 	return color;
 }
+
+float Rand(float2 co)
+{
+	//	frac은 0~1사이로 소숫점을 꺼내오는 함수임. 
+	return 0.5 + (frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453)) * 0.5;
+}
+
 #endif
+

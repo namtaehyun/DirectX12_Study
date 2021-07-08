@@ -7,6 +7,7 @@ class MeshRenderer;
 class MonoBehaviour;
 class Camera;
 class Light;
+class ParticleSystem;
 
 class GameObject : public Object, public enable_shared_from_this<GameObject>		// this를 smartptr로 사용하기 위함
 {
@@ -26,6 +27,7 @@ public:
 	shared_ptr<MeshRenderer>	GetMeshRenderer();
 	shared_ptr<Camera>				GetCamera();
 	shared_ptr<Light>					GetLight();
+	shared_ptr<ParticleSystem>	GetParticleSystem();
 
 	void									AddComponent(shared_ptr<Component> component);
 
