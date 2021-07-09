@@ -56,7 +56,7 @@ public:
 	Shader();
 	virtual ~Shader();
 
-	void													CreateGraphicsShader(const wstring& path, ShaderInfo info = ShaderInfo(), const string& vs = "VS_Main", const string& ps = "PS_Main", const string& gs = "GS_Main");
+	void													CreateGraphicsShader(const wstring& path, ShaderInfo info = ShaderInfo(), const string& vs = "VS_Main", const string& ps = "PS_Main", const string& gs = "");
 	void													CreateComputeShader(const wstring& path, const string& name, const string& version);
 	void													Update();
 

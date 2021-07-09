@@ -432,17 +432,18 @@ void Resources::CreateDefaultMaterial()
 
 	// Particle
 	{
-		shared_ptr<Shader> shader = make_shared<Shader>(L"Particle");
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Particle");
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(shader);
 		Add<Material>(L"Particle", material);
 	}
 
-	// Compute Particle
+	// ComputeParticle
 	{
-		shared_ptr<Shader> shader = make_shared<Shader>(L"ComputeParticle");
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeParticle");
 		shared_ptr<Material> material = make_shared<Material>();
 		material->SetShader(shader);
+
 		Add<Material>(L"ComputeParticle", material);
 	}
 }

@@ -85,7 +85,7 @@ void GS_Main(point VS_OUT input[1], inout TriangleStream<GS_OUT> outputStream)
 	output[0].position = mul(output[0].position, g_matProjection);
 	output[1].position = mul(output[1].position, g_matProjection);
 	output[2].position = mul(output[2].position, g_matProjection);
-	output[3].position = mul(output[3].position, g_matProjection);			
+	output[3].position = mul(output[3].position, g_matProjection);
 
 	output[0].uv = float2(0.f, 0.f);
 	output[1].uv = float2(1.f, 0.f);
@@ -166,7 +166,7 @@ void CS_Main(int3 threadIndex : SV_DispatchThreadID)				// 가장 먼저 Compute Sha
 			int expected = remaining;
 			int desired = remaining - 1;
 			int originalValue;
-			InterlockedCompareExchange(g_shared[0].addCount, expected, desired, originalValue);		
+			InterlockedCompareExchange(g_shared[0].addCount, expected, desired, originalValue);
 			// 인터락계열로 루프안의 데이터 초기화를 병렬로 했을 때 충돌이 나지 않도록 수행.
 			// 한번에 무조건 한번만 실행되는 함수
 			// expected와 addCount가 같으면 desired를 addCount에 넣어주고, addCount를 originalValue에 넣어주는 함수.

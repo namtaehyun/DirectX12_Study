@@ -4,15 +4,18 @@
 
 Shader::Shader() : Object(OBJECT_TYPE::SHADER)
 {
+
 }
 
 Shader::~Shader()
 {
+
 }
 
-void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const string& vs , const string& ps, const string& gs)
+void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const string& vs, const string& ps, const string& gs)
 {
 	_info = info;
+
 	CreateVertexShader(path, vs, "vs_5_0");
 	CreatePixelShader(path, ps, "ps_5_0");
 
@@ -22,7 +25,6 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 	D3D12_INPUT_ELEMENT_DESC desc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-//		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -31,9 +33,9 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 	_graphicsPipelineDesc.InputLayout = { desc, _countof(desc) };
 	_graphicsPipelineDesc.pRootSignature = GRAPHICS_ROOT_SIGNATURE.Get();
 
-	_graphicsPipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);				// 옵션 수정 SkyBox의 경우 큐브와 달리 와인딩오더가 반대일 때 보여져야 함.
+	_graphicsPipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	_graphicsPipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	_graphicsPipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);		// 옵션 수정
+	_graphicsPipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	_graphicsPipelineDesc.SampleMask = UINT_MAX;
 	_graphicsPipelineDesc.PrimitiveTopologyType = GetTopologyType(info.topology);
 	_graphicsPipelineDesc.NumRenderTargets = 1;
@@ -43,45 +45,45 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 
 	switch (info.shaderType)
 	{
-	case  SHADER_TYPE::DEFERRED:
+	case SHADER_TYPE::DEFERRED:
 		_graphicsPipelineDesc.NumRenderTargets = RENDER_TARGET_G_BUFFER_GROUP_MEMBER_COUNT;
-		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;		// Position
-		_graphicsPipelineDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT;		// Normal
-		_graphicsPipelineDesc.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;			// Color
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT; // POSITION
+		_graphicsPipelineDesc.RTVFormats[1] = DXGI_FORMAT_R32G32B32A32_FLOAT; // NORMAL
+		_graphicsPipelineDesc.RTVFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM; // COLOR
 		break;
 	case SHADER_TYPE::FORWARD:
 		_graphicsPipelineDesc.NumRenderTargets = 1;
-		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 	case SHADER_TYPE::LIGHTING:
 		_graphicsPipelineDesc.NumRenderTargets = 2;
-		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_B8G8R8A8_UNORM;
-		_graphicsPipelineDesc.RTVFormats[1] = DXGI_FORMAT_B8G8R8A8_UNORM;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		_graphicsPipelineDesc.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 	case SHADER_TYPE::PARTICLE:
 		_graphicsPipelineDesc.NumRenderTargets = 1;
-		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8_B8G8_UNORM;
+		_graphicsPipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		break;
 	}
 
 	switch (info.rasterizerType)
 	{
-		case RASTERIZER_TYPE::CULL_BACK:
-			_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-			_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
-			break;
-		case RASTERIZER_TYPE::CULL_FRONT:
-			_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-			_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
-			break;
-		case RASTERIZER_TYPE::CULL_NONE:
-			_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-			_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-			break;
-		case RASTERIZER_TYPE::WIREFRAME:
-			_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-			_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-			break;
+	case RASTERIZER_TYPE::CULL_BACK:
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+		break;
+	case RASTERIZER_TYPE::CULL_FRONT:
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
+		break;
+	case RASTERIZER_TYPE::CULL_NONE:
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		break;
+	case RASTERIZER_TYPE::WIREFRAME:
+		_graphicsPipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		_graphicsPipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		break;
 	}
 
 	switch (info.depthStencilType)
@@ -116,9 +118,11 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 		_graphicsPipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		break;
 	}
-	
+
 	D3D12_RENDER_TARGET_BLEND_DESC& rt = _graphicsPipelineDesc.BlendState.RenderTarget[0];
 
+	// SrcBlend = Pixel Shader
+	// DestBlend = Render Target
 	switch (info.blendType)
 	{
 	case BLEND_TYPE::DEFAULT:
@@ -140,7 +144,6 @@ void Shader::CreateGraphicsShader(const wstring& path, ShaderInfo info, const st
 		rt.DestBlend = D3D12_BLEND_ONE;
 		break;
 	}
-
 
 	DEVICE->CreateGraphicsPipelineState(&_graphicsPipelineDesc, IID_PPV_ARGS(&_pipelineState));
 }
@@ -166,7 +169,6 @@ void Shader::Update()
 		GRAPHICS_CMD_LIST->SetPipelineState(_pipelineState.Get());
 	}
 }
-
 
 void Shader::CreateShader(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob, D3D12_SHADER_BYTECODE& shaderByteCode)
 {
