@@ -18,4 +18,4 @@ private:
 
 private:
 	map<uint64, shared_ptr<InstancingBuffer>> _buffers;
-};
+};  

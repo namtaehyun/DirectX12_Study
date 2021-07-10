@@ -9,7 +9,8 @@ enum
 	MATERIAL_FLOAT_COUNT = 4,
 	MATERIAL_TEXTURE_COUNT = 4,
 	MATERIAL_VECTOR2_COUNT = 4,
-	MATERIAL_VECTOR4_COUNT = 4
+	MATERIAL_VECTOR4_COUNT = 4,
+	MATERIAL_MATRIX_COUNT = 4
 };
 
 struct MaterialParams
@@ -19,12 +20,14 @@ struct MaterialParams
 	void SetTexOn(uint32 index, int32 value) { texOnParams[index] = value; }
 	void SetVec2(int8 index, Vec2 value) { vec2Params[index] = value; }
 	void SetVec4(int8 index, Vec4 value) { vec4Params[index] = value; }
+	void SetMatrix(int8 index, Matrix& value) {	matrixParams[index] = value;}
 
 	array<int32, MATERIAL_INT_COUNT> intParams;
 	array<float, MATERIAL_FLOAT_COUNT> floatParams;
 	array<int32, MATERIAL_TEXTURE_COUNT> texOnParams;
 	array < Vec2, MATERIAL_VECTOR2_COUNT> vec2Params;
 	array < Vec4, MATERIAL_VECTOR4_COUNT> vec4Params;
+	array < Matrix, MATERIAL_MATRIX_COUNT> matrixParams;
 };
 
 class Material : public Object
@@ -43,6 +46,8 @@ public:
 		_textures[index] = texture; 
 		_params.SetTexOn(index, (texture == nullptr ? 0 : 1));		// Texture°¡ true¸é 0, false¸é 1
 	}
+	void SetMatrix(uint8 index, Matrix& value) { _params.SetMatrix(index, value); }
+
 	void SetVec2(int8 index, Vec2 value) { _params.SetVec2(index, value); }
 	void SetVec4(int8 index, Vec4 value) { _params.SetVec4(index, value); }
 

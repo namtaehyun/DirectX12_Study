@@ -31,6 +31,12 @@ public:
 	void							SetLocalRotation(const Vec3& rotation) { _localrotation = rotation; }
 	void							SetLocalScale(const Vec3& scale) { _localscale = scale; }
 
+	void							LookAt(const Vec3& dir);
+
+	static bool					CloseEnough(const float& a, const float& b, const float& epsilon = std::numeric_limits<float>::epsilon());		
+	// std::numeric_limits<float>::epsilon() = 1과 데이터 형식이 나타낼 수 있는 1보다 큰 가장 작은 값 사이의 차이를 반환합니다.
+	static Vec3					DecomposeRotationMatrix(const Matrix& rotation);
+
 public:
 	void							SetParent(shared_ptr<Transform> parent) { _parent = parent; }
 	weak_ptr<Transform>	GetParent() { return _parent; }

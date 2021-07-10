@@ -26,6 +26,7 @@ public:
 
 	void						Render();
 	void						Render(shared_ptr<class InstancingBuffer>& buffer);
+	void						RenderShadow();
 
 	shared_ptr<Material> GetMaterial() { return _material; }
 	uint64					GetInstanceID();
