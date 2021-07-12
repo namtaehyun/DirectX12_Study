@@ -27,6 +27,8 @@ void Texture::Load(const wstring& path)
 	if (FAILED(hr))
 		assert(nullptr);
 
+	_desc = _tex2D->GetDesc();
+
 	vector<D3D12_SUBRESOURCE_DATA> subResources;
 
 	hr = ::PrepareUpload(DEVICE.Get(),
