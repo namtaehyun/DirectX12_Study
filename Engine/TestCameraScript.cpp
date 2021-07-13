@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Input.h"
 #include "Timer.h"
+#include	"SceneManager.h"
 
 TestCameraScript::TestCameraScript()
 {
@@ -52,5 +53,10 @@ void TestCameraScript::LateUpdate()
 		GetTransform()->SetLocalRotation(rotation);
 	}
 
+	if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
+	{
+		const POINT& pos = INPUT->GetMousePos();
+		GET_SINGLE(SceneManager)->Pick(pos.x, pos.y);
+	}
 	GetTransform()->SetLocalPosition(pos);
 }
